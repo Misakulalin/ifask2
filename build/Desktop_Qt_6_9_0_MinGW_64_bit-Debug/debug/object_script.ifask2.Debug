@@ -1,0 +1,10 @@
+debug/chatdialog.o
+debug/logindialog.o
+debug/main.o
+debug/ifask2.o
+debug/registdialog.o
+debug/qrc_image.o
+debug/moc_chatdialog.o
+debug/moc_ifask2.o
+debug/moc_logindialog.o
+debug/moc_registdialog.o
