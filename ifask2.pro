@@ -1,6 +1,6 @@
-QT       += core gui
+QT       += core gui network#添加网络功能
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets#所使用的qt版本
 
 CONFIG += c++17
 
@@ -10,16 +10,22 @@ CONFIG += c++17
 
 SOURCES += \
     chatdialog.cpp \
+    global.cpp \
+    httpmgr.cpp \
     logindialog.cpp \
     main.cpp \
     ifask2.cpp \
-    registdialog.cpp
+    registdialog.cpp \
+    singleton.cpp
 
 HEADERS += \
     chatdialog.h \
+    global.h \
+    httpmgr.h \
     ifask2.h \
     logindialog.h \
-    registdialog.h
+    registdialog.h \
+    singleton.h
 
 FORMS += \
     chatdialog.ui \

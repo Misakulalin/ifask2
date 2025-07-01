@@ -16,6 +16,10 @@ public:
     ~RegistDialog();
 
 
+private slots:
+    void on_get_code_clicked();
+    void showTip(QString str);
+
 private:
     Ui::RegistDialog *ui;
 };

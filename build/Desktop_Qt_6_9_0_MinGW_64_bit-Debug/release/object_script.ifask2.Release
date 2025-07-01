@@ -1,8 +1,10 @@
 release/chatdialog.o
+release/global.o
 release/logindialog.o
 release/main.o
 release/ifask2.o
 release/registdialog.o
+release/singleton.o
 release/qrc_image.o
 release/moc_chatdialog.o
 release/moc_ifask2.o

@@ -309,6 +309,7 @@ Makefile: ../../ifask2.pro D:/qt/6.9.0/mingw_64/mkspecs/win32-g++/qmake.conf D:/
 		../../ifask2.pro \
 		D:/qt/6.9.0/mingw_64/lib/Qt6Widgets.prl \
 		D:/qt/6.9.0/mingw_64/lib/Qt6Gui.prl \
+		D:/qt/6.9.0/mingw_64/lib/Qt6Network.prl \
 		D:/qt/6.9.0/mingw_64/lib/Qt6Core.prl \
 		D:/qt/6.9.0/mingw_64/lib/Qt6EntryPoint.prl \
 		D:/qt/6.9.0/mingw_64/mkspecs/features/build_pass.prf \
@@ -553,6 +554,7 @@ D:/qt/6.9.0/mingw_64/mkspecs/features/lex.prf:
 ../../ifask2.pro:
 D:/qt/6.9.0/mingw_64/lib/Qt6Widgets.prl:
 D:/qt/6.9.0/mingw_64/lib/Qt6Gui.prl:
+D:/qt/6.9.0/mingw_64/lib/Qt6Network.prl:
 D:/qt/6.9.0/mingw_64/lib/Qt6Core.prl:
 D:/qt/6.9.0/mingw_64/lib/Qt6EntryPoint.prl:
 D:/qt/6.9.0/mingw_64/mkspecs/features/build_pass.prf:
