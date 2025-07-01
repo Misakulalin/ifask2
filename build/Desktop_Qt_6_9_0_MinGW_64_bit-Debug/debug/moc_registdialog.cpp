@@ -41,16 +41,20 @@ template <> constexpr inline auto RegistDialog::qt_create_metaobjectdata<qt_meta
         "RegistDialog",
         "on_get_code_clicked",
         "",
-        "showTip",
-        "str"
+        "slot_reg_mod_finish",
+        "ReqId",
+        "id",
+        "res",
+        "ErrorCodes",
+        "err"
     };
 
     QtMocHelpers::UintData qt_methods {
         // Slot 'on_get_code_clicked'
         QtMocHelpers::SlotData<void()>(1, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'showTip'
-        QtMocHelpers::SlotData<void(QString)>(3, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::QString, 4 },
+        // Slot 'slot_reg_mod_finish'
+        QtMocHelpers::SlotData<void(ReqId, QString, ErrorCodes)>(3, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 4, 5 }, { QMetaType::QString, 6 }, { 0x80000000 | 7, 8 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -76,7 +80,7 @@ void RegistDialog::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: _t->on_get_code_clicked(); break;
-        case 1: _t->showTip((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 1: _t->slot_reg_mod_finish((*reinterpret_cast< std::add_pointer_t<ReqId>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<ErrorCodes>>(_a[3]))); break;
         default: ;
         }
     }

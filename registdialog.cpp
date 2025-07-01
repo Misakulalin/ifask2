@@ -1,6 +1,7 @@
 #include "registdialog.h"
 #include "ui_registdialog.h"
 #include"global.h"
+#include"httpmgr.h" //网络请求类
 #include <QRegularExpression>
 RegistDialog::RegistDialog(QWidget *parent)
     : QDialog(parent)
@@ -28,6 +29,8 @@ RegistDialog::RegistDialog(QWidget *parent)
     ui->err_tip->setProperty("state","normal");//设置错误提示的状态
     repolish(ui->err_tip);
     connect(ui->qpush,&QPushButton::clicked,this,&RegistDialog::on_get_code_clicked);//按钮连接发送验证码
+    connect(HttpMgr::GetInstance().get(),&HttpMgr::sig_reg_mod_finish,this,
+            &RegistDialog::slot_reg_mod_finish);//网络请求检查通过，检测发射的网络请求并启动相关槽函数
 }
 
  void RegistDialog::on_get_code_clicked()//槽函数的实现
@@ -41,41 +44,61 @@ RegistDialog::RegistDialog(QWidget *parent)
          //发送http请求获取验证码
      }else{
          //提示邮箱不正确
-         showTip(tr("邮箱地址不正确"));
+         showTip(tr("邮箱地址不正确"),false);
      }
 }
-void RegistDialog::showTip(QString str)
+void RegistDialog::showTip(QString str,bool b_ok)
 {
+    if(b_ok){
+        ui->err_tip->setProperty("state","normal");
+    }else{
+        ui->err_tip->setProperty("state","err");
+    }
+
     ui->err_tip->setText(str);
-    ui->err_tip->setProperty("state","err");
+
     repolish(ui->err_tip);
 }
 
-// void RegistDialog::on_sure_clicked()
-// {
-//     auto password = ui->password_2->text();
-//     if(password.isEmpty()){
-//         showTip("密码不能为空");
-//         return;
-//     }
+void RegistDialog::slot_reg_mod_finish(ReqId id, QString res, ErrorCodes err)
+{
+    if(err !=ErrorCodes::SUCCESS)
+    {
+        showTip(tr("网络请求错误"),false);
+    }
+    //解析字符串，res并转换。
+    QJsonDocument jsonDoc=QJsonDocument::fromJson(res.toUtf8());//将字符转换成utf8的格式
+    if(jsonDoc.isEmpty())
+    {
+        showTip("解析失败",false);
+        return;
+    }
+    //json解析错误
+    if(!jsonDoc.isObject()){
+        showTip(tr("json解析错误"),false);
+        return;
+    }
+    //调用对应的逻辑,根据id回调。
+    _hanlders[id](jsonDoc.object());
+    return;
+}
 
-//     auto confirmed = ui->confirmed_2->text();
-//     if(confirmed.isEmpty()){
-//         showTip("确认密码不能为空");
-//         return;
-//     }
+void RegistDialog::initHttpHandlers()
+{
+    //获取验证码
+    _hanlders.insert(ReqId::ID_GET_VARIFY_CODE,[this](const QJsonObject& jsonObj){
+        int error= jsonObj["error"].toInt();
+        if(error != ErrorCodes::SUCCESS){
+            showTip("参数错误",false);
+        }
+        auto email= jsonObj["email"].isString();
+        showTip("验证码已经发送",true);
+        qDebug()<<"email is"<<email;
+        initHttpHandlers();
+    });
+}
 
-//     auto code = ui->verify_edit->text();
-//     if(code.isEmpty()){
-//         showTip("验证码不能为空");
-//         return;
-//     }
 
-//     if(password != confirmed){
-//         showTip("密码和确认密码不一致");
-//         return;
-//     }
-// }
 RegistDialog::~RegistDialog()
 {
     delete ui;
