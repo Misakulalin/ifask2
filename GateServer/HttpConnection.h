@@ -8,6 +8,7 @@ public:
 	HttpConnection(tcp::socket socket);//CSver中传入的socker套接字
 	void Start();//Start() 方法本身通常不直接实现核心功能，而是作为调度器或协调器来调用其他函数的功能。但在这里不一样。
 private:
+    void PreParseGetParam();
     void CheckDeadline();//超时检测
 	void WriteResponse();//收到链接并且处理完请求后，写入应答。
     void HandleReq();//处理请求
@@ -25,5 +26,8 @@ private:
     net::steady_timer deadline_{
 		_socket.get_executor(), std::chrono::seconds(60) };//get_executor() 获取执行器，steady_timer 用于设置一个定时器，std::chrono::seconds(60) 设置超时时间为60秒
     //执行器是对异步事件进行管理的，所以计时器需要从执行器中去获取计时的开始节点。
+    std::string _get_url;
+    //std::unordered_map <std::string , std::string> _get_params;
+    std::unordered_map<std::string, std::string> _get_params;
 };
 
