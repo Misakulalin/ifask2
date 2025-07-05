@@ -12,7 +12,7 @@ void HttpConnection::Start()
             if (ec) {
 				std::cout << "Error reading request: " << ec.what() << std::endl;
             }
-            boost::ignore_unused(bytes_transferred);
+            boost::ignore_unused(bytes_transferred);//编译器警告抑制工具
             self->HandleReq();//处理请求
 			self->CheckDeadline(); //检查超时
 
@@ -50,6 +50,21 @@ void HttpConnection::HandleReq() {
         WriteResponse();
         return;
     }
+    if (_request.method() == http::verb::post) {
+        bool success = LogicSystem::GetInstance()->HandlePost(_request.target(), shared_from_this());
+        if (!success) {
+            _response.result(http::status::not_found);
+            _response.set(http::field::content_type, "text/plain");
+            beast::ostream(_response.body()) << "url not found\r\n";
+            WriteResponse();
+            return;
+        }
+
+        _response.result(http::status::ok);
+        _response.set(http::field::server, "GateServer");
+        WriteResponse();
+        return;
+    }
 }
 
 void HttpConnection::WriteResponse() {
@@ -71,13 +86,13 @@ void HttpConnection::CheckDeadline() {
         {
             if (!ec)
             {
-                // Close socket to cancel any outstanding operation.
+     
                 self->_socket.close(ec);
             }
         });
 }
 
-//char 转为16进制
+//char 转为16进制，URL 规范（RFC 3986）规定使用十六进制。
 unsigned char ToHex(unsigned char x)
 {
     return  x > 9 ? x + 55 : x + 48;
@@ -89,17 +104,17 @@ unsigned char FromHex(unsigned char x)
     if (x >= 'A' && x <= 'Z') y = x - 'A' + 10;
     else if (x >= 'a' && x <= 'z') y = x - 'a' + 10;
     else if (x >= '0' && x <= '9') y = x - '0';
-    else assert(0);
+    else assert(0);//assert() 是 C++ 标准库中的一个宏，不是方法，用于调试时的断言检查。
     return y;
 }
-//编码
+//编码，URL 只能包含ASCII 字符（字母、数字、部分符号）。
 std::string UrlEncode(const std::string& str)
 {
     std::string strTemp = "";
     size_t length = str.length();
     for (size_t i = 0; i < length; i++)
     {
-        //判断是否仅有数字和字母构成
+        //判断是否仅有数字和字母构成，特殊字符必须表示为 %XX 格式。
         if (isalnum((unsigned char)str[i]) ||
             (str[i] == '-') ||
             (str[i] == '_') ||
@@ -112,8 +127,8 @@ std::string UrlEncode(const std::string& str)
         {
             //其他字符需要提前加%并且高四位和低四位分别转为16进制
             strTemp += '%';
-            strTemp += ToHex((unsigned char)str[i] >> 4);
-            strTemp += ToHex((unsigned char)str[i] & 0x0F);
+            strTemp += ToHex((unsigned char)str[i] >> 4);//高四位：一个字节的前4位（左边4位），低四位相反。
+            strTemp += ToHex((unsigned char)str[i] & 0x0F);//一个字节刚好是两个十六进制数字。
         }
     }
     return strTemp;
@@ -131,34 +146,35 @@ std::string UrlDecode(const std::string& str)
         else if (str[i] == '%')
         {
             assert(i + 2 < length);
-            unsigned char high = FromHex((unsigned char)str[++i]);
+			unsigned char high = FromHex((unsigned char)str[++i]);//++i 先自增再使用，i指向下一个字符
             unsigned char low = FromHex((unsigned char)str[++i]);
             strTemp += high * 16 + low;
         }
-        else strTemp += str[i];
+        else strTemp += str[i];//位的权值是 16，低位的权值是 1， 组合公式：value = high * 16 + low。
+       
     }
     return strTemp;
 }
 void HttpConnection::PreParseGetParam() {
+
     // 提取 URI  
-    auto uri = _request.target();
-    // 查找查询字符串的开始位置（即 '?' 的位置）  
+    auto uri = _request.target(); 
     auto query_pos = uri.find('?');
     if (query_pos == std::string::npos) {
         _get_url = uri;
         return;
     }
-
-    _get_url = uri.substr(0, query_pos);
+    _get_url = uri.substr(0, query_pos);//提取 ? 之前的部分作为路径
     std::string query_string = uri.substr(query_pos + 1);
     std::string key;
     std::string value;
-    size_t pos = 0;
+    size_t pos = 0;//准备解析查询参数字符串中的键值对
+    //每次找到一个 &，就认为前面是一组参数对,在参数对中查找 = 分割 key 和 value。
     while ((pos = query_string.find('&')) != std::string::npos) {
         auto pair = query_string.substr(0, pos);
-        size_t eq_pos = pair.find('=');
+        size_t eq_pos = pair.find('=');//size_t表示无符号整数类型。
         if (eq_pos != std::string::npos) {
-            key = UrlDecode(pair.substr(0, eq_pos)); // 假设有 url_decode 函数来处理URL解码  
+            key = UrlDecode(pair.substr(0, eq_pos)); // 假设有 url_decode 函数来处理URL解码 ,将解析出的 key 和 value 存入 。
             value = UrlDecode(pair.substr(eq_pos + 1));
             _get_params[key] = value;
         }

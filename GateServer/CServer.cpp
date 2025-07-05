@@ -1,7 +1,8 @@
 #include "CServer.h"
-CServer::CServer(boost::asio::io_context& ioc, unsigned short& port) :_ioc(ioc), //构造函数初始化成员变量
+CServer::CServer(boost::asio::io_context& ioc, unsigned short& port) :_ioc(ioc), 
 _acceptor(ioc, tcp::endpoint(tcp::v4(), port)), _socket(ioc) {
-}//列表初始化完成，_acceptor将绑定到指定的端口上，_socket将用于与客户端进行通信。
+}
+//列表初始化完成，_acceptor将绑定到指定的端口上，_socket将用于与客户端进行通信。
 
 void CServer::Start()
 {

@@ -1,12 +1,12 @@
 #pragma once
 #include"const.h"//引用本地库
-
+//建立http的连接类，具体的实现在logissystem中实现
 class HttpConnection: public std::enable_shared_from_this<HttpConnection>//继承共享指针
 {
 	friend class LogicSystem;//一个信类的友元类
 public:
 	HttpConnection(tcp::socket socket);//CSver中传入的socker套接字
-	void Start();//Start() 方法本身通常不直接实现核心功能，而是作为调度器或协调器来调用其他函数的功能。但在这里不一样。
+	void Start();
 private:
     void PreParseGetParam();
     void CheckDeadline();//超时检测
