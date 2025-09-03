@@ -3,8 +3,12 @@
 #include <json/value.h>
 #include <json/reader.h>
 #include "CServer.h"
+#include "ConfigMgr.h"//包含的是配置文件的读取逻辑
 int main()
 {
+    ConfigMgr gCfgMgr;
+    std::string gate_port_str = gCfgMgr["GateServer"]["Port"];
+    unsigned short gate_port = atoi(gate_port_str.c_str());
     try
     {
         unsigned short port = static_cast<unsigned short>(8080);//端口一般是无符号的

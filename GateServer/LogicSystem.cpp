@@ -1,5 +1,6 @@
 #include "LogicSystem.h"
 #include "HttpConnection.h"
+#include"VerifyGrpcClient.h"
 //HttpHandler 就是"处理 HTTP 请求的函数"的类型定义。
 void LogicSystem::RegGet(std::string url, HttpHandler handler) {
     _get_handlers.insert(make_pair(url, handler));//URL 绑定：将 URL 路径与处理函数绑定
@@ -33,6 +34,7 @@ LogicSystem::LogicSystem() {
         }
      
         auto email = src_root["email"].asString();
+        GetVarifyRsp rsp = VerifyGrpcClient::GetInstance()->GetVarifyCode(email);
         std::cout << "email is " << email << std::endl;
         root["error"] = 0;
         root["email"] = src_root["email"];

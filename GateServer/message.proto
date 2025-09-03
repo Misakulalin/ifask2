@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package message;//类似于go语言的包管理，声明下面的接口属于某个包，声明命名空间。
+
+service VarifyService {
+  rpc GetVarifyCode (GetVarifyReq) returns (GetVarifyRsp) {}
+}
+
+message GetVarifyReq {
+  string email = 1;
+}
+
+message GetVarifyRsp {
+  int32 error = 1;
+  string email = 2;
+  string code = 3;
+}

@@ -5,9 +5,9 @@
 template <typename T>
 class Singleton {
 protected:
-    Singleton() = default;
-    Singleton(const Singleton<T>&) = delete;
-    Singleton& operator=(const Singleton<T>& st) = delete;
+    Singleton() = default;//初始化为默认值
+    Singleton(const Singleton<T>&) = delete;//禁止拷贝
+    Singleton& operator=(const Singleton<T>& st) = delete;//禁止赋值
 
     static std::shared_ptr<T> _instance;
 public:
