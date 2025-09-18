@@ -21,6 +21,6 @@ public:
 private:
 	tcp::acceptor  _acceptor;//tcp中的acceptor类，用于接受新到来的链接
 	net::io_context& _ioc;//net::io_context 是 Boost.Asio 中的一个核心类，用于管理异步 I/O 操作和事件循环。
-	boost::asio::ip::tcp::socket   _socket;//网络套接字，用于与客户端进行通信。
+	//boost::asio::ip::tcp::socket   _socket;//网络套接字，用于与客户端进行通信。后面改成从线程池中获取线程，所以这个套接字去掉
 };
 
